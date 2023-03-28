@@ -10,12 +10,12 @@ chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument('--blink-settings=imagesEnabled=false')
 Driver = webdriver.Chrome(executable_path="C:/Users/HP/Desktop/chromedriver.exe",options=options,chrome_options=chrome_options)
 total = 0
-pages = 50
-keywords= ["208 noire",'dacia logan' ]
+keywords= ["208 2020",'dacia logan' ]
 for keyword in keywords:
     keyword.replace(" ", "-")
 #TODO:Rework keyword_search() such that number of results is considered
-def keyword_search():
+#Can add &hasPictures=true in link
+def keyword_search(pages):
     global total
     for keyword in keywords:
         for i in range(1, pages, 1):
@@ -36,10 +36,10 @@ def keyword_search():
             with open("links.txt", "a+") as file:
                 for link in links[3:len(links) - 11]:
                     file.write(link + '\n')
-            time.sleep(1)
+            time.sleep(1000)
 
 
-def normal_search():
+def normal_search(pages):
     global total
     for i in range(1,pages,1):
         links = []
@@ -62,4 +62,4 @@ def normal_search():
                 file.write(link+'\n')
         time.sleep(1)
 
-normal_search()
+keyword_search(50)

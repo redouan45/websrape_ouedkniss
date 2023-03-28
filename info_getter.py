@@ -32,7 +32,6 @@ with open("links.txt" , 'r') as file:
         fixed = False
         exchange= False
         image_links = []
-
         Driver.get(link+'?lang=en')
         time.sleep(3)
         title = Driver.find_element_by_xpath('//*[@id="sidebar-layout"]/div[1]/header/h1')
