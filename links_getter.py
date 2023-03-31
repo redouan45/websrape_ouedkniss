@@ -1,3 +1,4 @@
+import selenium.common.exceptions
 from selenium import webdriver
 import time
 from selenium.webdriver.chrome.options import Options
@@ -9,12 +10,12 @@ def scroll(s):
         time.sleep(1)
 print(datetime.now())
 options1 = Options()
-options1.add_argument('--headless')
-options1.add_argument('--disable-gpu')
+# options1.add_argument('--headless')
+# options1.add_argument('--disable-gpu')
 options1.add_argument('--blink-settings=imagesEnabled=false')
 Driver = webdriver.Chrome(executable_path="C:/Users/HP/Desktop/chromedriver.exe",chrome_options=options1)
 total = 0
-keywords= ["208 2020",'dacia logan' ]
+keywords= ["208 2023 love and thunder",'dacia logan' ]
 for keyword in keywords:
     keyword.replace(" ", "-")
 #Can add &hasPictures=true in link
@@ -26,10 +27,14 @@ def keyword_search(pages):
         Driver.get(f'https://www.ouedkniss.com/automobiles/{1}?keywords={keyword}&lang=en')
         time.sleep(3)
         scroll(400)
-        pages_nav = Driver.find_element_by_xpath('//*[@id="search-content"]/div/div[4]/div/nav/ul')
-        if int(pages_nav.text.split('\n')[-1]) < pages :
-            pages = int(pages_nav.text.split('\n')[-1])
-            print(f'Only found {pages} Pages')
+        try:
+            pages_nav = Driver.find_element_by_xpath('//*[@id="search-content"]/div/div[4]/div/nav/ul')
+            if int(pages_nav.text.split('\n')[-1]) < pages :
+                pages = int(pages_nav.text.split('\n')[-1])
+                print(f'Only found {pages} Pages')
+        except selenium.common.exceptions.NoSuchElementException :
+            print('no results found')
+            pages = 1
         for i in range(1, pages, 1):
             links = []
             Driver.get(f'https://www.ouedkniss.com/automobiles/{i}?keywords={keyword}&lang=en')
