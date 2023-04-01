@@ -3,11 +3,11 @@ import time
 from selenium.webdriver.chrome.options import Options
 import json
 
-options = Options
-options.headless = True
-chrome_options = webdriver.ChromeOptions()
-#chrome_options.add_argument('--blink-settings=imagesEnabled=false')
-Driver = webdriver.Chrome(executable_path="C:/Users/HP/Desktop/chromedriver.exe",options=options,chrome_options=chrome_options)
+options1 = Options()
+options1.add_argument('--headless')
+options1.add_argument('--disable-gpu')
+options1.add_argument('--blink-settings=imagesEnabled=false')
+Driver = webdriver.Chrome(executable_path="./chromedriver.exe",chrome_options=options1)
 
 with open("links.txt" , 'r') as file:
     links = file.readlines()

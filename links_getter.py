@@ -10,10 +10,10 @@ def scroll(s):
         time.sleep(1)
 print(datetime.now())
 options1 = Options()
-# options1.add_argument('--headless')
-# options1.add_argument('--disable-gpu')
+options1.add_argument('--headless')
+options1.add_argument('--disable-gpu')
 options1.add_argument('--blink-settings=imagesEnabled=false')
-Driver = webdriver.Chrome(executable_path="C:/Users/HP/Desktop/chromedriver.exe",chrome_options=options1)
+Driver = webdriver.Chrome(executable_path="./chromedriver.exe",chrome_options=options1)
 total = 0
 keywords= ["208 2023 love and thunder",'dacia logan' ]
 for keyword in keywords:
