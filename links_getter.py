@@ -10,8 +10,8 @@ def scroll(s):
         time.sleep(1)
 print(datetime.now())
 options1 = Options()
-options1.add_argument('--headless')
-options1.add_argument('--disable-gpu')
+# options1.add_argument('--headless')
+# options1.add_argument('--disable-gpu')
 options1.add_argument('--blink-settings=imagesEnabled=false')
 Driver = webdriver.Chrome(executable_path="./chromedriver.exe",chrome_options=options1)
 total = 0
@@ -24,6 +24,7 @@ for keyword in keywords:
 def keyword_search(pages):
     global total
     for keyword in keywords:
+        pages1 = pages
         Driver.get(f'https://www.ouedkniss.com/automobiles/{1}?keywords={keyword}&lang=en')
         time.sleep(3)
         scroll(400)
@@ -34,8 +35,8 @@ def keyword_search(pages):
                 print(f'Only found {pages} Pages')
         except selenium.common.exceptions.NoSuchElementException :
             print('no results found')
-            pages = 1
-        for i in range(1, pages, 1):
+            pages1 = 1
+        for i in range(1, pages1, 1):
             links = []
             Driver.get(f'https://www.ouedkniss.com/automobiles/{i}?keywords={keyword}&lang=en')
             time.sleep(3)
