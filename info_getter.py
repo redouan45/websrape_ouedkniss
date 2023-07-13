@@ -4,9 +4,9 @@ from selenium.webdriver.chrome.options import Options
 import json
 
 options1 = Options()
-options1.add_argument('--headless')
-options1.add_argument('--disable-gpu')
-options1.add_argument('--blink-settings=imagesEnabled=false')
+# options1.add_argument('--headless')
+# options1.add_argument('--disable-gpu')
+options1.add_argument('--blink-settings=imagesEnabled=true')
 Driver = webdriver.Chrome(executable_path="./chromedriver.exe",chrome_options=options1)
 
 with open("links.txt" , 'r') as file:
@@ -33,7 +33,7 @@ with open("links.txt" , 'r') as file:
         exchange= False
         image_links = []
         Driver.get(link+'?lang=en')
-        time.sleep(3)
+        time.sleep(2)
         title = Driver.find_element_by_xpath('//*[@id="sidebar-layout"]/div[1]/header/h1')
         try:
             exchangable = Driver.find_element_by_xpath('//*[@id="sidebar-layout"]/div[1]/header/span')

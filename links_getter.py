@@ -5,7 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from datetime import datetime
 def scroll(s):
     for i in range(0, 6):
-        s = s + 250
+        s = s + 300
         Driver.execute_script(f"window.scrollTo(0, window.scrollY + {s})")
         time.sleep(1)
 print(datetime.now())
@@ -15,7 +15,7 @@ options1 = Options()
 options1.add_argument('--blink-settings=imagesEnabled=false')
 Driver = webdriver.Chrome(executable_path="./chromedriver.exe",chrome_options=options1)
 total = 0
-keywords= ["208 2023 love and thunder",'dacia logan' ]
+keywords= ["fiat",'dacia logan' ]
 for keyword in keywords:
     keyword.replace(" ", "-")
 #Can add &hasPictures=true in link
@@ -27,7 +27,7 @@ def keyword_search(pages):
         pages1 = pages
         Driver.get(f'https://www.ouedkniss.com/automobiles/{1}?keywords={keyword}&lang=en')
         time.sleep(3)
-        scroll(400)
+        scroll(450)
         try:
             pages_nav = Driver.find_element_by_xpath('//*[@id="search-content"]/div/div[4]/div/nav/ul')
             if int(pages_nav.text.split('\n')[-1]) < pages :
