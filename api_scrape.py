@@ -151,8 +151,3 @@ for page in cars:
         car_data.append(response.text)
 print(car_data)
 print(datetime.datetime.now())
-
-
-
-
-
