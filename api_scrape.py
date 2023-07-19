@@ -119,7 +119,7 @@ def get_cars(Query,req_pages):
     return cars
 
 print(datetime.datetime.now())
-cars = get_cars("207",10)
+cars = get_cars("207",1)
 car_data = []
 for page in cars:
     for car in page:
@@ -146,8 +146,41 @@ for page in cars:
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.67',
             'x-app-version': '"2.1.27"',
         }
+        payload_phone = json.dumps({
+            "operationName": "UnhidePhone",
+            "variables": {
+                "id": car['id']
+            },
+            "query": "query UnhidePhone($id: ID!) {\n  phones: announcementPhoneGet(id: $id) {\n    phone\n   }\n}\n"
+        })
+        headers_phone = {
+            'authority': 'api.ouedkniss.com',
+            'accept': '*/*',
+            'accept-language': 'en',
+            'authorization': '',
+            'content-type': 'application/json',
+            'dnt': '1',
+            'locale': 'en',
+            'origin': 'https://www.ouedkniss.com',
+            'referer': 'https://www.ouedkniss.com/',
+            'save-data': 'on',
+            'sec-ch-ua': '"Not.A/Brand";v="8", "Chromium";v="114", "Microsoft Edge";v="114"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'same-site',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.67',
+            'x-app-version': '"2.1.27"',
+            'x-referer': 'https://www.ouedkniss.com/cars-skoda-kodiaq-2023-sportline-el-biar-algiers-algeria-d36804477',
+            'x-track-id': '23efcadb-f886-44b1-93ce-97f7ed21dd07',
+            'x-track-timestamp': '1689506773'
+        }
         response = requests.request("POST", url, headers=headers, data=payload)
+        response_phone = requests.request('POST',url,headers=headers_phone , data= payload_phone )
         print(f"processing car id: {car['id']}")
-        car_data.append(response.text)
+        final = response.json()
+        final['Phone'] = response_phone.json()['data']['phones']
+        car_data.append(final)
 print(car_data)
 print(datetime.datetime.now())
