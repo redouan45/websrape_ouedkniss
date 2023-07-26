@@ -5,6 +5,7 @@ import json
 import datetime
 import asyncio
 import aiohttp
+from aiolimiter import AsyncLimiter
 
 async def get_cars(Query,req_pages):
     global url
@@ -183,11 +184,8 @@ async def get_data(cars):
                     'sec-ch-ua-platform': '"Windows"',
                     'sec-fetch-dest': 'empty',
                     'sec-fetch-mode': 'cors',
-                    'sec-fetch-site': 'same-site',
                     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.67',
                     'x-app-version': '"2.1.27"',
-                    'x-referer': 'https://www.ouedkniss.com/cars-skoda-kodiaq-2023-sportline-el-biar-algiers-algeria-d36804477',
-                    'x-track-id': '23efcadb-f886-44b1-93ce-97f7ed21dd07',
                     'x-track-timestamp': '1689506773'
                 }
                 car_tasks.append(session.post(  url, headers=headers, data=payload))
@@ -195,8 +193,6 @@ async def get_data(cars):
         segment_car_task = []
         segment_phone_task = []
         for i in range(0,len(car_tasks)):
-            segment_car_task.append(car_tasks[i])
-            segment_phone_task.append(phone_tasks[i])
             if  i%48 ==0 :
                 time.sleep(0.5)
                 result_items = await asyncio.gather(*segment_car_task)
@@ -207,12 +203,14 @@ async def get_data(cars):
                     phone_data.append(await phone.text())
                 segment_car_task = []
                 segment_phone_task = []
+            segment_car_task.append(car_tasks[i])
+            segment_phone_task.append(phone_tasks[i])
 
 
     return  car_data,  phone_data
 
 print(datetime.datetime.now())
-cars  = asyncio.run(get_cars("dacia",10))
+cars  = asyncio.run(get_cars("207",1))
 
 for i in range(0, len(cars)):
     cars[i] = cars[i]['data']['search']['announcements']['data']

@@ -1,7 +1,6 @@
 import requests
 import json
 import datetime
-
 def get_cars(Query,req_pages):
     global url
     url= "https://api.ouedkniss.com/graphql"
@@ -58,7 +57,7 @@ def get_cars(Query,req_pages):
 
     response = requests.request("POST", url, headers=headers, data=payload)
     maxpage = response.json()['data']['search']['announcements']['paginatorInfo']['lastPage']
-    print(maxpage)
+    print(f' maximum number of pages is {maxpage}')
     cars = []
     Pages = min(int(req_pages), int(maxpage))
     print(f"pages that are going to be checked are {Pages}")
@@ -172,15 +171,17 @@ for page in cars:
             'sec-fetch-site': 'same-site',
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.67',
             'x-app-version': '"2.1.27"',
-            'x-referer': 'https://www.ouedkniss.com/cars-skoda-kodiaq-2023-sportline-el-biar-algiers-algeria-d36804477',
-            'x-track-id': '23efcadb-f886-44b1-93ce-97f7ed21dd07',
             'x-track-timestamp': '1689506773'
         }
-        response = requests.request("POST", url, headers=headers, data=payload)
-        response_phone = requests.request('POST',url,headers=headers_phone , data= payload_phone )
+        response = requests.request("POST", url, headers=headers, data=payload )
+        response_phone = requests.request('POST',url,headers=headers_phone , data= payload_phone)
         print(f"processing car id: {car['id']}")
         final = response.json()
-        final['Phone'] = response_phone.json()['data']['phones']
+        final['Phones'] = response_phone.json()['data']['phones']
         car_data.append(final)
-print(car_data)
+
+
+for car in car_data:
+    print(car)
+
 print(datetime.datetime.now())
