@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Phone number Example</title>
+</head>
+<body>
+<script type="text/javascript">
+    fetch("/phone_number/36859965")
+    .then(response => response.json())
+    .then(result => console.log(result['data']['phones']))
+    .catch(error => console.log('error', error));
+</script>
+
+</body>
+</html>
