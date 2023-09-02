@@ -1,13 +1,32 @@
 from selenium import webdriver
 import time
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
 import json
 
-options1 = Options()
 # options1.add_argument('--headless')
 # options1.add_argument('--disable-gpu')
-options1.add_argument('--blink-settings=imagesEnabled=true')
-Driver = webdriver.Chrome(executable_path="./chromedriver.exe",chrome_options=options1)
+def scroll(s):
+    for i in range(0, 2):
+        s = s + 300
+        Driver.execute_script(f"window.scrollTo(0, window.scrollY + {s})")
+        time.sleep(1)
+def Get_driver():
+    service = Service()
+    chrome_options = webdriver.ChromeOptions()
+    #Normal options
+    chrome_options.add_argument("disable-infobars")
+    chrome_options.add_argument("start-maximized")
+    chrome_options.add_argument("no-sandbox")
+    chrome_options.add_argument("disable-blink-features=AutomationControlled")
+    chrome_options.add_argument('--blink-settings=imagesEnabled=true')
+    #Experimental options:
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    driver = webdriver.Chrome(service=service,options=chrome_options)
+    return driver
+
+Driver = Get_driver()
 
 with open("links.txt" , 'r') as file:
     links = file.readlines()
@@ -30,20 +49,23 @@ with open("links.txt" , 'r') as file:
         offered = False
         negotiable = False
         fixed = False
+        actual_price = None
         exchange= False
+        phone_numbers = []
         image_links = []
         Driver.get(link+'?lang=en')
         time.sleep(2)
-        title = Driver.find_element_by_xpath('//*[@id="sidebar-layout"]/div[1]/header/h1')
+        scroll(150)
+        title = Driver.find_element(by='xpath',value='//*[@id="sidebar-layout"]/div[1]/header/h1')
         try:
-            exchangable = Driver.find_element_by_xpath('//*[@id="sidebar-layout"]/div[1]/header/span')
+            exchangable = Driver.find_element(by='xpath',value='//*[@id="sidebar-layout"]/div[1]/header/span')
             if 'Accept the exchange' in exchangable.text:
                 exchange = True
         except:
             print('')
         try:
-            price = Driver.find_element_by_xpath('//*[@id="sidebar-layout"]/div[1]/header/div')
-            actual_price = price.text.split(' ')[0]
+            price = Driver.find_element(by='xpath',value='//*[@id="sidebar-layout"]/div[1]/header/div')
+            actual_price = price.text
             if 'Offered' in price.text:
                 offered = True
             elif 'Negotiable' in price.text:
@@ -53,23 +75,23 @@ with open("links.txt" , 'r') as file:
         except:
             print('price not found!')
 
-        description_de_lannonce = Driver.find_element_by_xpath('//*[@id="sidebar-layout"]/div[1]/div[4]')
+        description_de_lannonce = Driver.find_element(by='xpath',value='//*[@id="sidebar-layout"]/div[1]/div[4]')
         try:
-            Description = Driver.find_element_by_xpath('//*[@id="sidebar-layout"]/div[1]/div[4]/div[3]/div/div/div').text
+            Description = Driver.find_element(by='xpath',value='//*[@id="sidebar-layout"]/div[1]/div[4]/div[3]/div/div/div').text
         except:
             print('no description found')
         try:
-            User_name = Driver.find_element_by_xpath('//*[@id="announcementUserInfo"]/div/a/div[2]').text
+            User_name = Driver.find_element(by='xpath',value='//*[@id="announcementUserInfo"]/div/a/div[2]').text
         except:
             print('no username')
         try:
-            location = Driver.find_element_by_xpath('//*[@id="announcementUserInfo"]/div/div[1]/div[2]')
+            location = Driver.find_element(by='xpath',value='//*[@id="announcementUserInfo"]/div/div[1]/div[2]')
             State = location.text.split('-')[0]
             City = location.text.split('-')[1]
         except:
             print('no location')
         try:
-            phone_numbers = Driver.find_element_by_xpath('//*[@id="announcementUserInfo"]/div/div[2]/div[2]/div').text.split('\n')
+            phone_numbers = Driver.find_element(by='xpath',value='//*[@id="announcementUserInfo"]/div/div[2]/div/div[2]/div').text.split('\n')
         except:
             print('no phone numbers')
 
@@ -95,19 +117,21 @@ with open("links.txt" , 'r') as file:
                 Mileage = properties_list[i+1]
             elif 'Car Options' in  properties_list[i]:
                 Car_options = properties_list[i+1: len(properties_list)-2]
+        try:
+            image_thumbnail = Driver.find_element(by='xpath',value='//*[@id="sidebar-layout"]/div[1]/div[2]/div/div/div/div[1]')
+            image_thumbnail.click()
+            time.sleep(2)
+            number_of_images = Driver.find_element(by=By.CSS_SELECTOR,value='#app > div.v-dialog__content.v-dialog__content--active > div > div.__actions > div > span')
 
-        image_thumbnail = Driver.find_element_by_xpath('//*[@id="sidebar-layout"]/div[1]/div[2]/div/div/div/div[1]/div/div[3]')
-        image_thumbnail.click()
-        time.sleep(2)
-        number_of_images = Driver.find_element_by_css_selector('#app > div.v-dialog__content.v-dialog__content--active > div > div > div.__actions > div > span')
-
-        for i in range(1,int(number_of_images.text.split('/')[1]),1):
-            next_image_btn = Driver.find_element_by_css_selector('#app > div.v-dialog__content.v-dialog__content--active > div > div > div.__actions > div > button:nth-child(10)')
-            img_link = Driver.find_element_by_css_selector('#app > div.v-dialog__content.v-dialog__content--active > div > div > div.__wrap > div > div > div > div > div.swiper-slide.swiper-zoom-container.swiper-slide-active > img')
-            link_data = img_link.get_attribute("src")
-            image_links.append(link_data)
-            next_image_btn.click()
-            time.sleep(1)
+            for i in range(1,int(number_of_images.text.split('/')[1]),1):
+                next_image_btn = Driver.find_element(by=By.CSS_SELECTOR,value='#app > div.v-dialog__content.v-dialog__content--active > div > div.__actions > div > button:nth-child(10)')
+                img_link = Driver.find_element(by=By.CSS_SELECTOR,value='#app > div.v-dialog__content.v-dialog__content--active > div > div.__wrap > div > div > div > div > div.swiper-slide.swiper-slide-active > div > img')
+                link_data = img_link.get_attribute("src")
+                image_links.append(link_data)
+                next_image_btn.click()
+                time.sleep(1)
+        except :
+            print('No images found')
 
         properties_dict = {
             'Title': title.text,
@@ -133,7 +157,6 @@ with open("links.txt" , 'r') as file:
             'Fixed Price': fixed,
             'images': image_links,
         }
-        print(properties_dict)
         pretty_json = json.dumps(properties_dict, indent=4,ensure_ascii=False)
         print(pretty_json)
 
